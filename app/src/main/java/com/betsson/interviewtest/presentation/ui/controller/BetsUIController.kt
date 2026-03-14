@@ -1,5 +1,6 @@
 package com.betsson.interviewtest.presentation.ui.controller
 
+import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
@@ -29,7 +30,11 @@ class BetsUIController(
         })
 
         viewModel.isLoading.observe(activity, Observer { isLoading ->
-            setLoading(isLoading)
+            viewModel.setShowContent(!isLoading)
+        })
+
+        viewModel.showContent.observe(activity, Observer { showContent ->
+            setLoading(!showContent)
         })
 
         viewModel.error.observe(activity, Observer { error ->
@@ -47,11 +52,11 @@ class BetsUIController(
 
     private fun setLoading(isLoading: Boolean) {
         if (isLoading) {
-            loadingProgress.visibility = android.view.View.VISIBLE
-            recyclerView.visibility = android.view.View.GONE
+            loadingProgress.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
         } else {
-            loadingProgress.visibility = android.view.View.GONE
-            recyclerView.visibility = android.view.View.VISIBLE
+            loadingProgress.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
         }
     }
 }

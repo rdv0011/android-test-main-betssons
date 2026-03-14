@@ -5,7 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.betsson.interviewtest.domain.model.Bet
-import com.betsson.interviewtest.domain.repository.BetRepository
+import com.betsson.interviewtest.domain.usecase.FetchBetsUseCase
+import com.betsson.interviewtest.domain.usecase.UpdateBetsOddsUseCase
 import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BetsViewModel @Inject constructor(
-    private val repository: BetRepository
+    private val fetchBetsUseCase: FetchBetsUseCase,
+    private val updateBetsOddsUseCase: UpdateBetsOddsUseCase
 ) : ViewModel() {
     
     private val _bets = MutableLiveData<List<Bet>>()
@@ -24,6 +26,9 @@ class BetsViewModel @Inject constructor(
     
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
+    
+    private val _showContent = MutableLiveData<Boolean>()
+    val showContent: LiveData<Boolean> = _showContent
     
     private var adapter: ItemAdapter? = null
     
@@ -40,7 +45,7 @@ class BetsViewModel @Inject constructor(
             try {
                 _isLoading.value = true
                 _error.value = null
-                val fetchedBets = repository.fetchBets()
+                val fetchedBets = fetchBetsUseCase()
                 _bets.value = fetchedBets
             } catch (e: Exception) {
                 _error.value = e.message
@@ -56,7 +61,7 @@ class BetsViewModel @Inject constructor(
                 _isLoading.value = true
                 _error.value = null
                 val currentBets = _bets.value ?: return@launch
-                val updatedBets = repository.updateBetsOdds(currentBets)
+                val updatedBets = updateBetsOddsUseCase(currentBets)
                 _bets.value = updatedBets
             } catch (e: Exception) {
                 _error.value = e.message
@@ -72,5 +77,9 @@ class BetsViewModel @Inject constructor(
     
     fun updateAdapterBets(bets: List<Bet>) {
         adapter?.updateBets(bets)
+    }
+    
+    fun setShowContent(show: Boolean) {
+        _showContent.value = show
     }
 }
