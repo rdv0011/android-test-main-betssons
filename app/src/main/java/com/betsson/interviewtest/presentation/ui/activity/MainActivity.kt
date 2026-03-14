@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.betsson.interviewtest.R
 import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
 import com.betsson.interviewtest.presentation.ui.controller.BetsUIController
-import com.betsson.interviewtest.presentation.ui.manager.BetsContentManager
 import com.betsson.interviewtest.presentation.viewmodel.BetsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,9 +28,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        val contentManager = BetsContentManager(recyclerView, loadingProgress, adapter)
-        val uiController = BetsUIController(this, viewModel, contentManager)
-
+        val uiController = BetsUIController(this, viewModel, recyclerView, loadingProgress, adapter)
         uiController.initialize()
     }
 }

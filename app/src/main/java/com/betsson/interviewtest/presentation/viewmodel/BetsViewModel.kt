@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.betsson.interviewtest.domain.model.Bet
 import com.betsson.interviewtest.domain.repository.BetRepository
+import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,8 +25,14 @@ class BetsViewModel @Inject constructor(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
     
+    private var adapter: ItemAdapter? = null
+    
     init {
         loadBets()
+    }
+    
+    fun setAdapter(adapter: ItemAdapter) {
+        this.adapter = adapter
     }
     
     private fun loadBets() {
@@ -61,5 +68,9 @@ class BetsViewModel @Inject constructor(
     
     fun refreshBets() {
         loadBets()
+    }
+    
+    fun updateAdapterBets(bets: List<Bet>) {
+        adapter?.updateBets(bets)
     }
 }

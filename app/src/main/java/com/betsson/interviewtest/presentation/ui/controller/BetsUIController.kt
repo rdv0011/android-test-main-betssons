@@ -1,30 +1,35 @@
 package com.betsson.interviewtest.presentation.ui.controller
 
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import com.betsson.interviewtest.R
-import com.betsson.interviewtest.presentation.ui.manager.BetsContentManager
+import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
 import com.betsson.interviewtest.presentation.viewmodel.BetsViewModel
 
 class BetsUIController(
     private val activity: AppCompatActivity,
     private val viewModel: BetsViewModel,
-    private val contentManager: BetsContentManager
+    private val recyclerView: RecyclerView,
+    private val loadingProgress: ProgressBar,
+    private val adapter: ItemAdapter
 ) {
 
     fun initialize() {
+        viewModel.setAdapter(adapter)
         observeViewModel()
         setupClickListeners()
     }
 
     private fun observeViewModel() {
         viewModel.bets.observe(activity, Observer { bets ->
-            contentManager.updateBets(bets)
+            viewModel.updateAdapterBets(bets)
         })
 
         viewModel.isLoading.observe(activity, Observer { isLoading ->
-            contentManager.setLoading(isLoading)
+            setLoading(isLoading)
         })
 
         viewModel.error.observe(activity, Observer { error ->
@@ -37,6 +42,16 @@ class BetsUIController(
         val updateOddsButton = activity.findViewById<Button>(R.id.update_odds_button)
         updateOddsButton.setOnClickListener {
             viewModel.updateOdds()
+        }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        if (isLoading) {
+            loadingProgress.visibility = android.view.View.VISIBLE
+            recyclerView.visibility = android.view.View.GONE
+        } else {
+            loadingProgress.visibility = android.view.View.GONE
+            recyclerView.visibility = android.view.View.VISIBLE
         }
     }
 }
