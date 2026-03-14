@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">InterviewTest</string>
+    <string name="bet_image_description">Bet image</string>
+    <string name="update_odds_button">Update Odds</string>
+    <string name="bet_sell_in_format">Sell In: %d</string>
+    <string name="bet_odds_format">Odds: %d</string>
 </resources>
