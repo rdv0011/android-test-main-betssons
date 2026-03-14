@@ -3,13 +3,17 @@ package com.betsson.interviewtest.data.repository
 import com.betsson.interviewtest.domain.model.Bet
 import com.betsson.interviewtest.domain.repository.BetRepository
 import com.betsson.interviewtest.utils.OddsCalculator
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class BetRepositoryImpl @Inject constructor(
     private val oddsCalculator: OddsCalculator
 ) : BetRepository {
     
-    override fun fetchBets(): List<Bet> {
+    override suspend fun fetchBets(): List<Bet> {
+        // Simulate network delay (2 seconds)
+        delay(2000)
+        
         val bets = arrayListOf<Bet>()
         bets.add(Bet(
             type = "Winning team",
@@ -51,7 +55,9 @@ class BetRepositoryImpl @Inject constructor(
         return bets
     }
     
-    override fun updateBetsOdds(bets: List<Bet>): List<Bet> {
+    override suspend fun updateBetsOdds(bets: List<Bet>): List<Bet> {
+        // Simulate network delay (1.5 seconds)
+        delay(1500)
         return oddsCalculator.calculateOdds(bets)
     }
 }

@@ -2,7 +2,9 @@ package com.betsson.interviewtest.presentation.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,10 +19,15 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: BetsViewModel by viewModels()
     private lateinit var adapter: ItemAdapter
+    private lateinit var loadingProgress: ProgressBar
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        loadingProgress = findViewById(R.id.loading_progress)
+        recyclerView = findViewById(R.id.recycler_view)
 
         setupRecyclerView()
         observeViewModel()
@@ -28,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         adapter = ItemAdapter(emptyList())
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -37,6 +43,16 @@ class MainActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.bets.observe(this, Observer { bets ->
             adapter.updateBets(bets)
+        })
+
+        viewModel.isLoading.observe(this, Observer { isLoading ->
+            if (isLoading) {
+                loadingProgress.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+            } else {
+                loadingProgress.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+            }
         })
 
         viewModel.error.observe(this, Observer { error ->
