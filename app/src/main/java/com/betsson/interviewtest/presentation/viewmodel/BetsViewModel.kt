@@ -1,14 +1,16 @@
 package com.betsson.interviewtest.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.betsson.interviewtest.domain.model.Bet
 import com.betsson.interviewtest.domain.usecase.FetchBetsUseCase
 import com.betsson.interviewtest.domain.usecase.UpdateBetsOddsUseCase
+import com.betsson.interviewtest.presentation.state.BetsUiState
 import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,17 +20,8 @@ class BetsViewModel @Inject constructor(
     private val updateBetsOddsUseCase: UpdateBetsOddsUseCase
 ) : ViewModel() {
     
-    private val _bets = MutableLiveData<List<Bet>>()
-    val bets: LiveData<List<Bet>> = _bets
-    
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-    
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> = _error
-    
-    private val _showContent = MutableLiveData<Boolean>()
-    val showContent: LiveData<Boolean> = _showContent
+    private val _uiState = MutableStateFlow<BetsUiState>(BetsUiState.Loading)
+    val uiState: StateFlow<BetsUiState> = _uiState.asStateFlow()
     
     private var adapter: ItemAdapter? = null
     
@@ -42,44 +35,28 @@ class BetsViewModel @Inject constructor(
     
     private fun loadBets() {
         viewModelScope.launch {
+            _uiState.value = BetsUiState.Loading
             try {
-                _isLoading.value = true
-                _error.value = null
                 val fetchedBets = fetchBetsUseCase()
-                _bets.value = fetchedBets
+                _uiState.value = BetsUiState.Success(fetchedBets)
             } catch (e: Exception) {
-                _error.value = e.message
-            } finally {
-                _isLoading.value = false
+                _uiState.value = BetsUiState.Error(e.message ?: "Unknown error")
             }
         }
     }
     
     fun updateOdds() {
         viewModelScope.launch {
+            val currentState = _uiState.value
+            if (currentState !is BetsUiState.Success) return@launch
+            
+            _uiState.value = BetsUiState.Loading
             try {
-                _isLoading.value = true
-                _error.value = null
-                val currentBets = _bets.value ?: return@launch
-                val updatedBets = updateBetsOddsUseCase(currentBets)
-                _bets.value = updatedBets
+                val updatedBets = updateBetsOddsUseCase(currentState.bets)
+                _uiState.value = BetsUiState.Success(updatedBets)
             } catch (e: Exception) {
-                _error.value = e.message
-            } finally {
-                _isLoading.value = false
+                _uiState.value = BetsUiState.Error(e.message ?: "Unknown error")
             }
         }
-    }
-    
-    fun refreshBets() {
-        loadBets()
-    }
-    
-    fun updateAdapterBets(bets: List<Bet>) {
-        adapter?.updateBets(bets)
-    }
-    
-    fun setShowContent(show: Boolean) {
-        _showContent.value = show
     }
 }

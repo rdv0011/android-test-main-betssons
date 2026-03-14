@@ -4,43 +4,57 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.betsson.interviewtest.R
+import com.betsson.interviewtest.presentation.state.BetsUiState
 import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
 import com.betsson.interviewtest.presentation.viewmodel.BetsViewModel
+import kotlinx.coroutines.launch
 
 class BetsUIController(
     private val activity: AppCompatActivity,
-    private val viewModel: BetsViewModel,
-    private val recyclerView: RecyclerView,
-    private val loadingProgress: ProgressBar,
-    private val adapter: ItemAdapter
+    private val viewModel: BetsViewModel
 ) {
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var loadingProgress: ProgressBar
+    private lateinit var adapter: ItemAdapter
+
     fun initialize() {
+        initializeViews()
         viewModel.setAdapter(adapter)
         observeViewModel()
         setupClickListeners()
     }
 
+    private fun initializeViews() {
+        recyclerView = activity.findViewById(R.id.recycler_view)
+        loadingProgress = activity.findViewById(R.id.loading_progress)
+        adapter = ItemAdapter(emptyList())
+
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.adapter = adapter
+    }
+
     private fun observeViewModel() {
-        viewModel.bets.observe(activity, Observer { bets ->
-            viewModel.updateAdapterBets(bets)
-        })
-
-        viewModel.isLoading.observe(activity, Observer { isLoading ->
-            viewModel.setShowContent(!isLoading)
-        })
-
-        viewModel.showContent.observe(activity, Observer { showContent ->
-            setLoading(!showContent)
-        })
-
-        viewModel.error.observe(activity, Observer { error ->
-            if (error != null) {
+        activity.lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    is BetsUiState.Loading -> {
+                        setLoading(true)
+                    }
+                    is BetsUiState.Success -> {
+                        setLoading(false)
+                        adapter.updateBets(state.bets)
+                    }
+                    is BetsUiState.Error -> {
+                        setLoading(false)
+                    }
+                }
             }
-        })
+        }
     }
 
     private fun setupClickListeners() {
