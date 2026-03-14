@@ -3,11 +3,14 @@ package com.betsson.interviewtest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: BetsViewModel by viewModels()
@@ -36,6 +39,11 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.error.observe(this, Observer { error ->
             if (error != null) {
+                Toast.makeText(
+                    this,
+                    "View model failed",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }

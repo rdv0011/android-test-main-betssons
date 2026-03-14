@@ -3,9 +3,13 @@ package com.betsson.interviewtest
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class BetsViewModel : ViewModel() {
-    private val repository = BetRepository()
+@HiltViewModel
+class BetsViewModel @Inject constructor(
+    private val repository: BetRepository
+) : ViewModel() {
     
     private val _bets = MutableLiveData<List<Bet>>()
     val bets: LiveData<List<Bet>> = _bets

@@ -8,12 +8,12 @@ class DefaultBetStrategy : OddsUpdateStrategy {
     override fun updateOdds(bet: Bet) {
         // Default behavior for regular bets
         if (bet.odds > 0) {
-            bet.odds = bet.odds - 1
+            bet.odds -= 1
         }
-        bet.sellIn = bet.sellIn - 1
+        bet.sellIn -= 1
 
         if (bet.sellIn < 0 && bet.odds > 0) {
-            bet.odds = bet.odds - 1
+            bet.odds -= 1
         }
     }
 }
@@ -32,14 +32,14 @@ class TotalScoreBetStrategy : OddsUpdateStrategy {
     override fun updateOdds(bet: Bet) {
         // Total score increases in value
         if (bet.odds < 50) {
-            bet.odds = bet.odds + 1
+            bet.odds += 1
         }
-        bet.sellIn = bet.sellIn - 1
+        bet.sellIn -= 1
 
         if (bet.sellIn < 0) {
             // After sell in, increases even more
             if (bet.odds < 50) {
-                bet.odds = bet.odds + 1
+                bet.odds += 1
             }
         }
     }
@@ -49,22 +49,22 @@ class NumberOfFoulsStrategy : OddsUpdateStrategy {
     override fun updateOdds(bet: Bet) {
         // Number of fouls has special behavior
         if (bet.odds < 50) {
-            bet.odds = bet.odds + 1
+            bet.odds += 1
         }
 
         if (bet.sellIn < 11) {
             if (bet.odds < 50) {
-                bet.odds = bet.odds + 1
+                bet.odds += 1
             }
         }
 
         if (bet.sellIn < 6) {
             if (bet.odds < 50) {
-                bet.odds = bet.odds + 1
+                bet.odds += 1
             }
         }
 
-        bet.sellIn = bet.sellIn - 1
+        bet.sellIn -= 1
 
         if (bet.sellIn < 0) {
             bet.odds = 0

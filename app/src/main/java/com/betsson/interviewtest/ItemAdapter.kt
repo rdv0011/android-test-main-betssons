@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 
@@ -39,7 +40,8 @@ class ItemAdapter(private var bets: List<Bet>) : RecyclerView.Adapter<ItemAdapte
     }
 
     fun updateBets(newBets: List<Bet>) {
-        bets = newBets
+        val sortedBets = newBets.sortedBy { it.sellIn }
+        bets = sortedBets
         notifyDataSetChanged()
     }
 }
