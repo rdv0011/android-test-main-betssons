@@ -1,4 +1,4 @@
-package com.betsson.interviewtest
+package com.betsson.interviewtest.di
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

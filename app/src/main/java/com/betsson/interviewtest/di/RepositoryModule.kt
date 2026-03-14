@@ -1,5 +1,8 @@
-package com.betsson.interviewtest
+package com.betsson.interviewtest.di
 
+import com.betsson.interviewtest.data.repository.BetRepositoryImpl
+import com.betsson.interviewtest.domain.repository.BetRepository
+import com.betsson.interviewtest.utils.OddsCalculator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +22,6 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideBetRepository(oddsCalculator: OddsCalculator): BetRepository {
-        return BetRepository(oddsCalculator)
+        return BetRepositoryImpl(oddsCalculator)
     }
 }

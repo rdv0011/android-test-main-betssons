@@ -1,12 +1,15 @@
-package com.betsson.interviewtest
+package com.betsson.interviewtest.data.repository
 
+import com.betsson.interviewtest.domain.model.Bet
+import com.betsson.interviewtest.domain.repository.BetRepository
+import com.betsson.interviewtest.utils.OddsCalculator
 import javax.inject.Inject
 
-class BetRepository @Inject constructor(
+class BetRepositoryImpl @Inject constructor(
     private val oddsCalculator: OddsCalculator
-) {
+) : BetRepository {
     
-    fun fetchBets(): List<Bet> {
+    override fun fetchBets(): List<Bet> {
         val bets = arrayListOf<Bet>()
         bets.add(Bet(
             type = "Winning team",
@@ -48,8 +51,7 @@ class BetRepository @Inject constructor(
         return bets
     }
     
-    fun updateBetsOdds(bets: List<Bet>): List<Bet> {
-        oddsCalculator.calculateOdds(bets)
-        return bets
+    override fun updateBetsOdds(bets: List<Bet>): List<Bet> {
+        return oddsCalculator.calculateOdds(bets)
     }
 }

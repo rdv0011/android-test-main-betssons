@@ -1,13 +1,14 @@
-package com.betsson.interviewtest
+package com.betsson.interviewtest.presentation.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.betsson.interviewtest.R
+import com.betsson.interviewtest.domain.model.Bet
 
 class ItemAdapter(private var bets: List<Bet>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 

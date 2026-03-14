@@ -1,8 +1,10 @@
-package com.betsson.interviewtest
+package com.betsson.interviewtest.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.betsson.interviewtest.domain.model.Bet
+import com.betsson.interviewtest.domain.repository.BetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -41,7 +43,7 @@ class BetsViewModel @Inject constructor(
         try {
             _isLoading.value = true
             _error.value = null
-            val currentBets = _bets.value?.toMutableList() ?: return
+            val currentBets = _bets.value ?: return
             val updatedBets = repository.updateBetsOdds(currentBets)
             _bets.value = updatedBets
         } catch (e: Exception) {

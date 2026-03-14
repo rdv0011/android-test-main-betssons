@@ -1,13 +1,15 @@
-package com.betsson.interviewtest
+package com.betsson.interviewtest.presentation.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.betsson.interviewtest.R
+import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
+import com.betsson.interviewtest.presentation.viewmodel.BetsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,11 +41,6 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.error.observe(this, Observer { error ->
             if (error != null) {
-                Toast.makeText(
-                    this,
-                    "View model failed",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
         })
     }
