@@ -5,18 +5,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.betsson.interviewtest.R
 import com.betsson.interviewtest.domain.model.Bet
 
-class ItemAdapter(private var bets: List<Bet>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class BetListAdapter : ListAdapter<Bet, BetListAdapter.ViewHolder>(BetDiffCallback) {
+
+    private object BetDiffCallback : DiffUtil.ItemCallback<Bet>() {
+        override fun areItemsTheSame(oldItem: Bet, newItem: Bet): Boolean {
+            return oldItem.type == newItem.type
+        }
+
+        override fun areContentsTheSame(oldItem: Bet, newItem: Bet): Boolean {
+            return oldItem == newItem
+        }
+    }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        private val nameView = view.findViewById<TextView>(R.id.bet_name)
-        private val sellInView = view.findViewById<TextView>(R.id.bet_sell_in)
-        private val oddsView = view.findViewById<TextView>(R.id.bet_odds)
-        private val imageView = view.findViewById<ImageView>(R.id.bet_image)
+        private val nameView: TextView = view.findViewById(R.id.bet_name)
+        private val sellInView: TextView = view.findViewById(R.id.bet_sell_in)
+        private val oddsView: TextView = view.findViewById(R.id.bet_odds)
+        private val imageView: ImageView = view.findViewById(R.id.bet_image)
 
         fun bind(bet: Bet) {
             nameView.text = bet.type
@@ -34,15 +46,7 @@ class ItemAdapter(private var bets: List<Bet>) : RecyclerView.Adapter<ItemAdapte
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = bets.size
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(bets[position])
-    }
-
-    fun updateBets(newBets: List<Bet>) {
-        val sortedBets = newBets.sortedBy { it.sellIn }
-        bets = sortedBets
-        notifyDataSetChanged()
+        holder.bind(getItem(position))
     }
 }

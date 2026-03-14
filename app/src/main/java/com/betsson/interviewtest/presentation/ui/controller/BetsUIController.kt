@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.betsson.interviewtest.R
 import com.betsson.interviewtest.presentation.state.BetsUiState
-import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
+import com.betsson.interviewtest.presentation.ui.adapter.BetListAdapter
 import com.betsson.interviewtest.presentation.viewmodel.BetsViewModel
 import kotlinx.coroutines.launch
 
@@ -23,11 +23,10 @@ class BetsUIController(
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var loadingProgress: ProgressBar
-    private lateinit var adapter: ItemAdapter
+    private lateinit var adapter: BetListAdapter
 
     fun initialize() {
         initializeViews()
-        viewModel.setAdapter(adapter)
         observeViewModel()
         setupClickListeners()
     }
@@ -35,7 +34,7 @@ class BetsUIController(
     private fun initializeViews() {
         recyclerView = activity.findViewById(R.id.recycler_view)
         loadingProgress = activity.findViewById(R.id.loading_progress)
-        adapter = ItemAdapter(emptyList())
+        adapter = BetListAdapter()
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = adapter
@@ -57,7 +56,7 @@ class BetsUIController(
 
             is BetsUiState.Success -> {
                 setLoading(false)
-                adapter.updateBets(state.bets)
+                adapter.submitList(state.bets)
             }
 
             is BetsUiState.Error -> {
