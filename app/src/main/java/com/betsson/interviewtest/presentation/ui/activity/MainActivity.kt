@@ -2,7 +2,6 @@ package com.betsson.interviewtest.presentation.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.viewModels
@@ -11,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.betsson.interviewtest.R
 import com.betsson.interviewtest.presentation.ui.adapter.ItemAdapter
+import com.betsson.interviewtest.presentation.ui.manager.BetsContentManager
 import com.betsson.interviewtest.presentation.viewmodel.BetsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,41 +18,32 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: BetsViewModel by viewModels()
-    private lateinit var adapter: ItemAdapter
-    private lateinit var loadingProgress: ProgressBar
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var contentManager: BetsContentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        loadingProgress = findViewById(R.id.loading_progress)
-        recyclerView = findViewById(R.id.recycler_view)
+        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+        val loadingProgress = findViewById<ProgressBar>(R.id.loading_progress)
+        val adapter = ItemAdapter(emptyList())
 
-        setupRecyclerView()
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        contentManager = BetsContentManager(recyclerView, loadingProgress, adapter)
+
         observeViewModel()
         setupClickListeners()
     }
 
-    private fun setupRecyclerView() {
-        adapter = ItemAdapter(emptyList())
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
-    }
-
     private fun observeViewModel() {
         viewModel.bets.observe(this, Observer { bets ->
-            adapter.updateBets(bets)
+            contentManager.updateBets(bets)
         })
 
         viewModel.isLoading.observe(this, Observer { isLoading ->
-            if (isLoading) {
-                loadingProgress.visibility = View.VISIBLE
-                recyclerView.visibility = View.GONE
-            } else {
-                loadingProgress.visibility = View.GONE
-                recyclerView.visibility = View.VISIBLE
-            }
+            contentManager.setLoading(isLoading)
         })
 
         viewModel.error.observe(this, Observer { error ->
