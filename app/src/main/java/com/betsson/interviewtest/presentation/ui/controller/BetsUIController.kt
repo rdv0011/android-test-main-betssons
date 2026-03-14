@@ -3,8 +3,11 @@ package com.betsson.interviewtest.presentation.ui.controller
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.betsson.interviewtest.R
@@ -40,19 +43,26 @@ class BetsUIController(
 
     private fun observeViewModel() {
         activity.lifecycleScope.launch {
-            viewModel.uiState.collect { state ->
-                when (state) {
-                    is BetsUiState.Loading -> {
-                        setLoading(true)
-                    }
-                    is BetsUiState.Success -> {
-                        setLoading(false)
-                        adapter.updateBets(state.bets)
-                    }
-                    is BetsUiState.Error -> {
-                        setLoading(false)
-                    }
+            activity.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    render(state)
                 }
+            }
+        }
+    }
+
+    private fun render(state: BetsUiState) {
+        when (state) {
+            is BetsUiState.Loading -> setLoading(true)
+
+            is BetsUiState.Success -> {
+                setLoading(false)
+                adapter.updateBets(state.bets)
+            }
+
+            is BetsUiState.Error -> {
+                setLoading(false)
+                Toast.makeText(activity, state.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -65,12 +75,7 @@ class BetsUIController(
     }
 
     private fun setLoading(isLoading: Boolean) {
-        if (isLoading) {
-            loadingProgress.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
-        } else {
-            loadingProgress.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-        }
+        loadingProgress.visibility = if (isLoading) View.VISIBLE else View.GONE
+        recyclerView.visibility = if (isLoading) View.GONE else View.VISIBLE
     }
 }
