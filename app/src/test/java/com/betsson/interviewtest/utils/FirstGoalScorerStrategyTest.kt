@@ -1,6 +1,7 @@
 package com.betsson.interviewtest.utils
 
 import com.betsson.interviewtest.domain.model.Bet
+import com.betsson.interviewtest.domain.service.FirstGoalScorerStrategy
 import org.junit.Test
 import kotlin.test.assertEquals
 

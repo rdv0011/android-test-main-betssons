@@ -21,15 +21,23 @@ presentation/
 
 domain/
 ├── model/              # Domain entities (Bet)
-├── repository/         # Repository interfaces
-└── usecase/            # Business logic (FetchBetsUseCase, UpdateBetsOddsUseCase)
+├── repository/         # Repository interfaces (data contracts)
+├── usecase/            # Business logic use cases
+│   ├── FetchBetsUseCase
+│   └── UpdateBetsOddsUseCase
+└── service/            # Business logic services
+    ├── OddsCalculator (odds calculation orchestrator)
+    ├── OddsUpdateStrategy (interface)
+    ├── DefaultBetStrategy
+    ├── FirstGoalScorerStrategy
+    ├── TotalScoreBetStrategy
+    └── NumberOfFoulsStrategy
 
 data/
 ├── datasource/         # BetLocalDataSource (data fetching)
-└── repository/         # BetRepositoryImpl (implementation)
+└── repository/         # BetRepositoryImpl (data source abstraction)
 
 di/                     # Hilt dependency injection modules
-utils/                  # OddsCalculator (odds calculation logic)
 ```
 
 ### Design Patterns
@@ -56,11 +64,12 @@ utils/                  # OddsCalculator (odds calculation logic)
 - Update odds button integration
 
 ### Domain Layer
-- **FetchBetsUseCase**: Retrieves initial bet data
-- **UpdateBetsOddsUseCase**: Updates odds based on bet strategies
-- **OddsCalculator**: Strategy-based odds calculation
+- **FetchBetsUseCase**: Retrieves initial bet data from repository
+- **UpdateBetsOddsUseCase**: Owns and executes odds calculation business logic via OddsCalculator
+- **OddsCalculator**: Strategy-based odds calculation service
+  - Strategy Pattern implementation with multiple bet type strategies
   - Default strategy (most bets)
-  - First goal scorer (special handling)
+  - First goal scorer (special handling - no change)
   - Total score (increases over time)
   - Number of fouls (accelerated increases)
 
@@ -78,26 +87,42 @@ sealed class BetsUiState {
 
 Unit test suite covering:
 - **BetsViewModelTest**: ViewModel state management and use case integration
-- **OddsCalculatorTest**: Odds calculation logic with parametrized tests
+- **OddsCalculatorTest**: Odds calculation logic with strategy routing
 - **Strategy Tests**: Individual bet strategy implementations
+  - DefaultBetStrategyParameterizedTest
+  - FirstGoalScorerStrategyTest
+  - TotalScoreBetStrategyParameterizedTest
+  - NumberOfFoulsStrategyParameterizedTest
 
 Tests use:
 - JUnit 4 framework
 - Mockito for mocking dependencies
 - Coroutine test utilities (MainDispatcherRule)
 
+**Build & Test Status**: ✅ All passing
+
 ## Evolution
 
 ### Initial State (Commit 0b076273)
 Basic Activity with inline RecyclerView + hardcoded odds calculation
 
-### Current State (Commit a0f3a6f)
-- Clean separation of domain logic from UI
-- Fragment-based UI composition with FragmentContainerView
-- Hilt dependency injection throughout
-- Reactive StateFlow state management
-- Unit test coverage
-- Strategy pattern for odds calculation
+### Step 1: MVVM & Clean Architecture (Commits up to 0803c81)
+- Separated concerns with ViewModel, Repository, Use Cases
+- Introduced domain/data/presentation layers
+
+### Step 2: Fragment-based UI (Commit a0f3a6f)
+- Migrated from UIController pattern to Fragment composition
+- Fragment-based UI with FragmentContainerView
+
+### Current State: Business Logic in Domain Layer
+- ✅ **OddsCalculator moved to domain/service/** (from utils/)
+- ✅ **UpdateBetsOddsUseCase now owns business logic** (not proxy to repository)
+- ✅ **BetRepository interface simplified** (only data operations: fetchBets)
+- ✅ **BetRepositoryImpl has single responsibility** (data source abstraction only)
+- ✅ **Proper Clean Architecture** - each layer owns its logic:
+  - Presentation: UI state management (ViewModel)
+  - Domain: Business logic (Use Cases + Services)
+  - Data: Data source abstraction (Repository)
 
 ## Build & Run
 

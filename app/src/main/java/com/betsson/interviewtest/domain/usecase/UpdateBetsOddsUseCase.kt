@@ -1,13 +1,13 @@
 package com.betsson.interviewtest.domain.usecase
 
 import com.betsson.interviewtest.domain.model.Bet
-import com.betsson.interviewtest.domain.repository.BetRepository
+import com.betsson.interviewtest.domain.service.OddsCalculator
 import javax.inject.Inject
 
 class UpdateBetsOddsUseCase @Inject constructor(
-    private val repository: BetRepository
+    private val oddsCalculator: OddsCalculator
 ) {
     suspend operator fun invoke(bets: List<Bet>): List<Bet> {
-        return repository.updateBetsOdds(bets)
+        return oddsCalculator.calculateOdds(bets)
     }
 }

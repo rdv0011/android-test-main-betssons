@@ -1,6 +1,7 @@
 package com.betsson.interviewtest.utils
 
 import com.betsson.interviewtest.domain.model.Bet
+import com.betsson.interviewtest.domain.service.TotalScoreBetStrategy
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

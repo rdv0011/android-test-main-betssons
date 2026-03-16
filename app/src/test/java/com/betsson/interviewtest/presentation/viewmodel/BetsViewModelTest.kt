@@ -2,6 +2,7 @@ package com.betsson.interviewtest.presentation.viewmodel
 
 import com.betsson.interviewtest.domain.model.Bet
 import com.betsson.interviewtest.domain.repository.BetRepository
+import com.betsson.interviewtest.domain.service.OddsCalculator
 import com.betsson.interviewtest.domain.usecase.FetchBetsUseCase
 import com.betsson.interviewtest.domain.usecase.UpdateBetsOddsUseCase
 import com.betsson.interviewtest.presentation.state.BetsUiState
@@ -27,6 +28,9 @@ class BetsViewModelTest {
     @Mock
     private lateinit var betRepository: BetRepository
 
+    @Mock
+    private lateinit var oddsCalculator: OddsCalculator
+
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
@@ -39,10 +43,9 @@ class BetsViewModelTest {
             Bet(type = "Team B", sellIn = 10, odds = 20, image = "")
         )
         whenever(betRepository.fetchBets()).thenReturn(bets)
-        whenever(betRepository.updateBetsOdds(bets)).thenReturn(bets)
 
         val fetchUseCase = FetchBetsUseCase(betRepository)
-        val updateUseCase = UpdateBetsOddsUseCase(betRepository)
+        val updateUseCase = UpdateBetsOddsUseCase(oddsCalculator)
         val viewModel = BetsViewModel(fetchUseCase, updateUseCase)
         advanceUntilIdle()
 
@@ -59,10 +62,9 @@ class BetsViewModelTest {
             Bet(type = "Team C", sellIn = 20, odds = 15, image = "")
         )
         whenever(betRepository.fetchBets()).thenReturn(bets)
-        whenever(betRepository.updateBetsOdds(bets)).thenReturn(bets)
 
         val fetchUseCase = FetchBetsUseCase(betRepository)
-        val updateUseCase = UpdateBetsOddsUseCase(betRepository)
+        val updateUseCase = UpdateBetsOddsUseCase(oddsCalculator)
         val viewModel = BetsViewModel(fetchUseCase, updateUseCase)
         advanceUntilIdle()
 
@@ -80,10 +82,10 @@ class BetsViewModelTest {
             Bet(type = "Team A", sellIn = 19, odds = 9, image = "")
         )
         whenever(betRepository.fetchBets()).thenReturn(originalBets)
-        whenever(betRepository.updateBetsOdds(originalBets)).thenReturn(updatedBets)
+        whenever(oddsCalculator.calculateOdds(originalBets)).thenReturn(updatedBets)
 
         val fetchUseCase = FetchBetsUseCase(betRepository)
-        val updateUseCase = UpdateBetsOddsUseCase(betRepository)
+        val updateUseCase = UpdateBetsOddsUseCase(oddsCalculator)
         val viewModel = BetsViewModel(fetchUseCase, updateUseCase)
         advanceUntilIdle()
 

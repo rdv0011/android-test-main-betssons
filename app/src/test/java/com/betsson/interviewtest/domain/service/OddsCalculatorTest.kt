@@ -1,4 +1,4 @@
-package com.betsson.interviewtest.utils
+package com.betsson.interviewtest.domain.service
 
 import com.betsson.interviewtest.domain.model.Bet
 import org.junit.Before
