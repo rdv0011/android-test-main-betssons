@@ -128,7 +128,7 @@ Basic Activity with inline RecyclerView + hardcoded odds calculation
 
 ### Prerequisites
 - Android SDK 34+
-- Kotlin 1.8.0+
+- Kotlin 2.0.21+
 - Java 17
 
 ### Build Commands
@@ -148,8 +148,9 @@ Basic Activity with inline RecyclerView + hardcoded odds calculation
 ```
 
 ### Build Status
-- **Framework**: Android Gradle Plugin
-- **Kotlin Compiler**: 1.8.0
+- **Framework**: Android Gradle Plugin 8.7.3
+- **Kotlin Compiler**: 2.0.21
+- **Annotation Processing**: KSP 2.0.21-1.0.27
 - **Target SDK**: 34
 - **Min SDK**: 24
 
@@ -161,12 +162,13 @@ Basic Activity with inline RecyclerView + hardcoded odds calculation
 - androidx.fragment:fragment-ktx:1.6.1
 
 ### Lifecycle & ViewModel
-- androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1
-- androidx.lifecycle:lifecycle-livedata-ktx:2.6.1
+- androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7
+- androidx.lifecycle:lifecycle-livedata-ktx:2.8.7
 - androidx.activity:activity-ktx:1.7.2
 
 ### Dependency Injection
-- com.google.dagger:hilt-android:2.44
+- com.google.dagger:hilt-android:2.51.1
+- com.google.devtools.ksp:2.0.21-1.0.27
 
 ### Navigation & UI
 - androidx.navigation:navigation-fragment-ktx:2.7.4
