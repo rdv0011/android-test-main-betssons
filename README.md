@@ -2,6 +2,9 @@
 
 A modern Android application demonstrating Clean Architecture, MVVM pattern, and reactive programming with Kotlin Coroutines.
 
+<img width="346" height="751" alt="Screenshot 2026-03-27 at 12 08 27" src="https://github.com/user-attachments/assets/a5546f7b-55f9-44fc-a2e1-cbc93d0a04c4" />
+
+
 ## Project Overview
 
 This is a refactored betting odds management application that evolved from a basic single-activity UI to a fully architected, testable application following Android best practices.
